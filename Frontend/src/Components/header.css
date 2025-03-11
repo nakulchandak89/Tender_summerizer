@@ -1,0 +1,23 @@
+.header {
+  background-color: #4CAF50; /* Change background color to green */
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the content */
+  padding: 10px;
+}
+
+.logo-section {
+  display: flex;
+  align-items: center;
+  margin-right: 20px;
+}
+
+.header-title {
+  font-size: 1.5em;
+  color: #efefef;
+  flex-grow: 1; /* Push the title to the center */
+  text-align: center;
+}
+
+/* Removed the .header-logo class */
+
