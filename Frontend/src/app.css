@@ -1,0 +1,287 @@
+/* Overall page styling */
+body {
+  margin: 0;
+  padding: 0;
+  background: #f0f2f5;
+  font-family: 'Roboto', sans-serif;
+  color: #333;
+}
+
+/* Loader styling */
+.loader {
+  border: 16px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 16px solid #3498db;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Landing section styling */
+.landing-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #f0f2f5;
+  padding: 20px;
+  text-align: center;
+}
+
+.landing-section .main-heading {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.landing-section .subheading {
+  font-size: 1.25rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.landing-section .primary-button {
+  padding: 15px 30px;
+  background-color: #ff5722;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 1.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.landing-section .primary-button:hover {
+  background-color: #e64a19;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.landing-section .primary-button i {
+  font-size: 1.5rem;
+}
+
+.landing-section .drag-drop-text {
+  font-size: 1rem;
+  color: #999;
+  margin-top: 10px;
+}
+
+.landing-section .drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 500px;
+  color: #999;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.landing-section .selected-file {
+  font-size: 1rem;
+  color: #333;
+  margin-top: 10px;
+}
+
+.landing-section .upload-button {
+  padding: 10px 25px;
+  background-color: #4CAF50;
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background 0.3s ease;
+}
+
+.landing-section .upload-button:hover {
+  background-color: #45a049;
+}
+
+/* Response section styling */
+.response-section {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  text-align: left;
+  margin: 20px auto;
+  max-width: 700px;
+}
+
+.response-section h2 {
+  margin-top: 0;
+  color: #2575fc;
+}
+
+.response-section p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.response-section .response-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  margin-top: 20px;
+}
+
+/* About Us section styling */
+.about-section {
+  background-color: rgb(95, 95, 95);
+  padding: 20px;
+  margin: 20px 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  animation: fadeIn 1s;
+  color: Blue; 
+  display: flex;
+  flex-direction: column; /* Stack heading and cards vertically */
+}
+
+/* Center the heading, add a line beneath it */
+.about-section h2 {
+  color: #000;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 20px;
+  position: relative; /* Needed for the decorative line */
+}
+
+.about-section h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 2px;
+  background-color: #000;
+  margin: 10px auto 0 auto; /* Centers the line under the heading */
+}
+
+/* Cards row: start from left, horizontal layout */
+.about-section .team-cards {
+  display: flex;           /* Arrange cards in a row */
+  justify-content: flex-start;
+  gap: 20px;               /* Gap between cards */
+  overflow-x: auto;        /* Horizontal scrolling if needed */
+  width: 100%;
+}
+
+.about-section .team-card {
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 200px;  /* Width of the card */
+  height: 300px; /* Height of the card */
+}
+
+.about-section .team-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+}
+
+.about-section .team-card h3 {
+  margin-top: 0;
+  color: #05b4ff;
+}
+
+.about-section .team-card p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #555;
+}
+
+.about-section .team-card p.name {
+  background-color: yellow;
+  font-weight: bold;
+  border-radius: 5px;
+  padding: 5px 10px;
+  margin-bottom: 10px;
+}
+
+.about-section p {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #efefee; /* For the general text in the about section */
+}
+
+/* Modal styling */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  animation: fadeIn 0.5s;
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  animation: slideIn 0.5s;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+@keyframes slideIn {
+  from { transform: translateY(-50px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+/* Fade in animation */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .landing-section .main-heading {
+    font-size: 2.5rem;
+  }
+
+  .landing-section .subheading {
+    font-size: 1rem;
+  }
+
+  .landing-section .primary-button {
+    font-size: 1rem;
+  }
+}
