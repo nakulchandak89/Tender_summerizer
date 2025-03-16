@@ -2,16 +2,16 @@
 body {
   margin: 0;
   padding: 0;
-  background: #f0f2f5;
+  background: linear-gradient(135deg, #4A6FA5, #1E3A5F); /* Stylish Metallic Blue Gradient */
   font-family: 'Roboto', sans-serif;
-  color: #333;
+  color: #FFFFFF; /* White Font Color */
 }
 
 /* Loader styling */
 .loader {
-  border: 16px solid #f3f3f3;
+  border: 16px solid #B0C4DE; /* Light Steel Blue */
   border-radius: 50%;
-  border-top: 16px solid #3498db;
+  border-top: 16px solid #a8acb0; /* Muted Metallic Blue */
   width: 120px;
   height: 120px;
   animation: spin 2s linear infinite;
@@ -30,7 +30,7 @@ body {
   align-items: center;
   justify-content: center;
   height: 100vh;
-  background-color: #f0f2f5;
+  background: linear-gradient(135deg, #517D98, #243B55); /* Stylish Metallic Blue Gradient */
   padding: 20px;
   text-align: center;
 }
@@ -38,22 +38,22 @@ body {
 .landing-section .main-heading {
   font-size: 3rem;
   font-weight: bold;
-  color: #333;
+  color: #FFFFFF; /* White Font Color */
   margin-bottom: 10px;
 }
 
 .landing-section .subheading {
   font-size: 1.25rem;
-  color: #666;
+  color: #FFFFFF; /* White Font Color */
   margin-bottom: 20px;
 }
 
 .landing-section .primary-button {
   padding: 15px 30px;
-  background-color: #ff5722;
+  background-color: #5D89B3; /* Muted Metallic Blue */
   border: none;
   border-radius: 5px;
-  color: #fff;
+  color: #FFFFFF; /* White */
   font-size: 1.25rem;
   cursor: pointer;
   display: flex;
@@ -63,132 +63,80 @@ body {
 }
 
 .landing-section .primary-button:hover {
-  background-color: #e64a19;
+  background-color: #1E3A5F; /* Deep Metallic Blue */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-.landing-section .primary-button i {
-  font-size: 1.5rem;
-}
-
-.landing-section .drag-drop-text {
-  font-size: 1rem;
-  color: #999;
-  margin-top: 10px;
-}
-
-.landing-section .drop-zone {
-  border: 2px dashed #ccc;
-  border-radius: 5px;
-  padding: 20px;
-  margin-top: 20px;
-  width: 100%;
-  max-width: 500px;
-  color: #999;
-  font-size: 1rem;
-  text-align: center;
-}
-
-.landing-section .selected-file {
-  font-size: 1rem;
-  color: #333;
-  margin-top: 10px;
-}
-
-.landing-section .upload-button {
-  padding: 10px 25px;
-  background-color: #4CAF50;
+/* Upload button styling */
+.upload-button {
+  padding: 15px 30px;
+  background-color: #5D89B3; /* Muted Metallic Blue */
   border: none;
   border-radius: 5px;
-  color: #fff;
-  font-size: 1rem;
+  color: #FFFFFF; /* White */
+  font-size: 1.25rem;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
   margin-top: 10px;
-  transition: background 0.3s ease;
 }
 
-.landing-section .upload-button:hover {
-  background-color: #45a049;
+.upload-button:disabled {
+  background-color: #a8acb0; /* Muted Metallic Blue */
+  cursor: not-allowed;
+}
+
+.upload-button:hover:not(:disabled) {
+  background-color: #1E3A5F; /* Deep Metallic Blue */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Response section styling */
 .response-section {
-  background: #fff;
+  background: #F0F8FF; /* Alice Blue */
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   text-align: left;
   margin: 20px auto;
   max-width: 700px;
+  color: #000000; /* Black Font Color */
 }
 
 .response-section h2 {
   margin-top: 0;
-  color: #2575fc;
-}
-
-.response-section p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #555;
-}
-
-.response-section .response-card {
-  background: #fff;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  margin-top: 20px;
+  color: #5D89B3;
 }
 
 /* About Us section styling */
 .about-section {
-  background-color: rgb(95, 95, 95);
+  background: linear-gradient(135deg, #3B5F8F, #A9C2D8); /* Stylish Metallic Blue Gradient */
   padding: 20px;
   margin: 20px 10px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   animation: fadeIn 1s;
-  color: Blue; 
-  display: flex;
-  flex-direction: column; /* Stack heading and cards vertically */
+  color: #FFFFFF; /* White Font Color */
 }
 
-/* Center the heading, add a line beneath it */
 .about-section h2 {
-  color: #000;
+  color: #FFFFFF; /* White Font Color */
   text-align: center;
   width: 100%;
   margin-bottom: 20px;
-  position: relative; /* Needed for the decorative line */
-}
-
-.about-section h2::after {
-  content: "";
-  display: block;
-  width: 60px;
-  height: 2px;
-  background-color: #000;
-  margin: 10px auto 0 auto; /* Centers the line under the heading */
-}
-
-/* Cards row: start from left, horizontal layout */
-.about-section .team-cards {
-  display: flex;           /* Arrange cards in a row */
-  justify-content: flex-start;
-  gap: 20px;               /* Gap between cards */
-  overflow-x: auto;        /* Horizontal scrolling if needed */
-  width: 100%;
 }
 
 .about-section .team-card {
-  background: #fff;
+  background: #B0C4DE; /* Light Steel Blue */
   padding: 10px;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 200px;  /* Width of the card */
-  height: 300px; /* Height of the card */
+  width: 200px;
+  height: 300px;
+  color: #FFFFFF; /* White Font Color */
 }
 
 .about-section .team-card:hover {
@@ -196,34 +144,9 @@ body {
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
-.about-section .team-card h3 {
-  margin-top: 0;
-  color: #05b4ff;
-}
-
-.about-section .team-card p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #555;
-}
-
-.about-section .team-card p.name {
-  background-color: yellow;
-  font-weight: bold;
-  border-radius: 5px;
-  padding: 5px 10px;
-  margin-bottom: 10px;
-}
-
-.about-section p {
-  font-size: 1rem;
-  line-height: 1.6;
-  color: #efefee; /* For the general text in the about section */
-}
-
 /* Modal styling */
 .modal {
-  display: none; /* Hidden by default */
+  display: none;
   position: fixed;
   z-index: 1;
   left: 0;
@@ -236,39 +159,26 @@ body {
 }
 
 .modal-content {
-  background-color: #fefefe;
+  background-color: #E0E0E0;
   margin: 15% auto;
   padding: 20px;
-  border: 1px solid #888;
+  border: 1px solid #A9C2D8;
   width: 80%;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  animation: slideIn 0.5s;
+  color: #FFFFFF; /* White Font Color */
 }
 
 .close {
-  color: #aaa;
+  color: #5D89B3;
   float: right;
   font-size: 28px;
   font-weight: bold;
 }
 
-.close:hover,
-.close:focus {
-  color: black;
-  text-decoration: none;
+.close:hover {
+  color: #1E3A5F;
   cursor: pointer;
-}
-
-@keyframes slideIn {
-  from { transform: translateY(-50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-/* Fade in animation */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
 }
 
 /* Responsive design */
