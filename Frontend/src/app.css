@@ -2,25 +2,45 @@
 body {
   margin: 0;
   padding: 0;
-  background: linear-gradient(135deg, #4A6FA5, #1E3A5F); /* Stylish Metallic Blue Gradient */
+  background: linear-gradient(135deg, #3A8FB7, #1B4F72); /* Vibrant Blue Gradient */
   font-family: 'Roboto', sans-serif;
   color: #FFFFFF; /* White Font Color */
 }
 
+/* Set all text color to white */
+body, h1, h2, p, button, input, .selected-file {
+  color: #FFFFFF !important; /* Force white text color */
+}
+
+/* Loader container styling */
+.loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
 /* Loader styling */
 .loader {
-  border: 16px solid #B0C4DE; /* Light Steel Blue */
+  border: 8px solid #6C757D; /* Gray */
   border-radius: 50%;
-  border-top: 16px solid #a8acb0; /* Muted Metallic Blue */
-  width: 120px;
-  height: 120px;
-  animation: spin 2s linear infinite;
-  margin: 20px auto;
+  border-top: 8px solid #007BFF; /* Bright Blue */
+  width: 50px;
+  height: 50px;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
+}
+
+/* Loader text styling */
+.loader-container p {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: #FFFFFF; /* White text */
 }
 
 /* Landing section styling */
@@ -49,28 +69,31 @@ body {
 }
 
 .landing-section .primary-button {
-  padding: 15px 30px;
-  background-color: #5D89B3; /* Muted Metallic Blue */
+  padding: 20px 40px; /* Larger size */
+  background-color: #007BFF; /* Bright Blue */
   border: none;
-  border-radius: 5px;
-  color: #FFFFFF; /* White */
-  font-size: 1.25rem;
+  border-radius: 12px; /* Rounded corners */
+  color: #000000; /* Black text color */
+  font-size: 1.5rem; /* Larger font size */
+  font-weight: bold;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  transition: background 0.3s ease, transform 0.2s ease;
 }
 
 .landing-section .primary-button:hover {
-  background-color: #1E3A5F; /* Deep Metallic Blue */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: #0056b3; /* Darker Blue */
+  transform: scale(1.1); /* Slightly larger on hover */
+}
+
+.landing-section .primary-button:active {
+  background-color: #003f7f; /* Even Darker Blue */
+  transform: scale(0.95); /* Slightly smaller on click */
 }
 
 /* Upload button styling */
 .upload-button {
   padding: 15px 30px;
-  background-color: #5D89B3; /* Muted Metallic Blue */
+  background-color: #28A745; /* Green for action */
   border: none;
   border-radius: 5px;
   color: #FFFFFF; /* White */
@@ -84,64 +107,29 @@ body {
 }
 
 .upload-button:disabled {
-  background-color: #a8acb0; /* Muted Metallic Blue */
+  background-color: #6C757D; /* Gray for disabled */
   cursor: not-allowed;
 }
 
 .upload-button:hover:not(:disabled) {
-  background-color: #1E3A5F; /* Deep Metallic Blue */
+  background-color: #218838; /* Darker Green */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 /* Response section styling */
 .response-section {
-  background: #F0F8FF; /* Alice Blue */
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  text-align: left;
-  margin: 20px auto;
-  max-width: 700px;
-  color: #000000; /* Black Font Color */
+  background: rgba(0, 123, 255, 0.1); /* Light Blue Tint */
+  backdrop-filter: blur(10px); /* Blur effect */
+  border: 1px solid rgba(0, 123, 255, 0.3); /* Blue Border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 12px; /* Rounded corners */
+  padding: 20px; /* Increased padding for better spacing */
+  color: #FFFFFF !important; /* Override black font color */
 }
 
 .response-section h2 {
   margin-top: 0;
-  color: #5D89B3;
-}
-
-/* About Us section styling */
-.about-section {
-  background: linear-gradient(135deg, #3B5F8F, #A9C2D8); /* Stylish Metallic Blue Gradient */
-  padding: 20px;
-  margin: 20px 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  animation: fadeIn 1s;
-  color: #FFFFFF; /* White Font Color */
-}
-
-.about-section h2 {
-  color: #FFFFFF; /* White Font Color */
-  text-align: center;
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.about-section .team-card {
-  background: #B0C4DE; /* Light Steel Blue */
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  width: 200px;
-  height: 300px;
-  color: #FFFFFF; /* White Font Color */
-}
-
-.about-section .team-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  color: #007BFF; /* Bright Blue */
 }
 
 /* Modal styling */
@@ -192,6 +180,170 @@ body {
   }
 
   .landing-section .primary-button {
-    font-size: 1rem;
+    font-size: 1.25rem; /* Slightly smaller font size for smaller screens */
+    padding: 15px 30px; /* Adjust padding for smaller screens */
   }
+}
+
+/* Container for the new layout */
+.container {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  height: 100vh; /* Full viewport height */
+}
+
+/* Upload section styling */
+.upload-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+  backdrop-filter: blur(10px); /* Blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Light border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 12px; /* Rounded corners */
+  color: #FFFFFF !important; /* Override any other font color */
+  text-align: center;
+  width: 300px; /* Fixed width for square box */
+  height: 300px; /* Fixed height for square box */
+  padding: 20px;
+}
+
+/* Summarized text section styling */
+.summarized-text-section {
+  flex: 3;
+  display: flex;
+  flex-direction: column;
+  background: rgba(255, 255, 255, 0.2); /* Semi-transparent white */
+  backdrop-filter: blur(10px); /* Blur effect */
+  border: 1px solid rgba(255, 255, 255, 0.3); /* Light border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 12px; /* Rounded corners */
+  padding: 20px;
+  overflow-y: auto; /* Scrollable if content overflows */
+  max-height: calc(100vh - 40px); /* Adjust height to fit within the viewport */
+}
+
+.summarized-text-section h2 {
+  font-size: 2rem; /* Larger heading size */
+  font-weight: bold;
+  color: #0056b3; /* Darker Blue for headings */
+}
+
+.summarized-text-section .response-card {
+  font-size: 1.25rem; /* Larger text size */
+  line-height: 1.6; /* Improved readability */
+  color: #FFFFFF; /* White text for normal content */
+  background-color: rgba(0, 123, 255, 0.05); /* Subtle blue background for contrast */
+  padding: 15px;
+  border-radius: 8px;
+  text-align: justify; /* Align text for better readability */
+}
+
+/* Placeholder text styling */
+.placeholder-text {
+  color: rgba(255, 255, 255, 0.85); /* Slightly brighter white */
+  font-style: italic;
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Preview and summary section styling */
+.preview-summary-section {
+  flex: 2;
+  padding: 20px;
+  background: #F0F8FF; /* Alice Blue */
+  border-radius: 8px;
+  margin-left: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Preview section styling */
+.preview-section {
+  flex: 1;
+  background: rgba(40, 167, 69, 0.1); /* Light Green Tint */
+  backdrop-filter: blur(10px); /* Blur effect */
+  border: 1px solid rgba(40, 167, 69, 0.3); /* Green Border */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  border-radius: 12px; /* Rounded corners */
+  padding: 20px; /* Increased padding for better spacing */
+  color: #FFFFFF; /* White Font Color */
+  text-align: center;
+}
+
+.preview-section h2 {
+  margin-top: 0;
+  color: #28A745; /* Green */
+}
+
+/* Summarize button styling */
+.summarize-button {
+  padding: 15px 30px;
+  background-color: #FFC107; /* Yellow for emphasis */
+  border: none;
+  border-radius: 5px;
+  color: #FFFFFF; /* White */
+  font-size: 1.25rem;
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summarize-button:disabled {
+  background-color: #6C757D; /* Gray for disabled */
+  cursor: not-allowed;
+}
+
+.summarize-button:hover:not(:disabled) {
+  background-color: #E0A800; /* Darker Yellow */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Upload and Preview Section Container */
+.upload-preview-section {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: flex-start;
+  margin-bottom: 20px;
+}
+
+/* Summarized Text Section */
+.summarized-text-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Ensure text inside buttons remains white */
+.upload-button, .summarize-button {
+  color: #fdfffc !important; /* Force white text color */
+}
+
+/* Backend message styling */
+.backend-message {
+  margin-top: 10px;
+  font-size: 0.9rem;
+  color: #FFFFFF; /* White text */
+  opacity: 0.7; /* Reduced opacity for subtle appearance */
+  text-align: center;
+}
+
+/* Response card styling */
+.response-card {
+  flex: 1;
+  overflow-y: auto; /* Scrollable if content overflows */
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.1); /* Slightly transparent background */
+  border-radius: 8px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1); /* Inset shadow for depth */
+}
+.primary-button{
+  color: #000000 !important;
 }

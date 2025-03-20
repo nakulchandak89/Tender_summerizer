@@ -1,10 +1,6 @@
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import './app.css';
-// import TiltedCard from './TiltedCard';
-// import nakulImage from './assets/Nakul.jpg'; 
-// import vedantimg  from './assets/vedant.jpg';
-// import shauriyaimg from './assets/shauriya.jpg';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -38,7 +34,7 @@ function App() {
       });
 
       if (res.data.clean_text) {
-        setResponse(res.data.clean_text); // Use the correct key from the backend response
+        setResponse(res.data.clean_text); // Use the clean_text key from the backend response
       } else {
         setResponse('Unexpected response from the server.');
       }
@@ -51,45 +47,50 @@ function App() {
   };
 
   return (
-    <div className='div1'>
-      {/* Landing Section */}
-      <div className="landing-section">
-        <h1 className="main-heading">Tender Summarizer</h1>
-        <p className="subheading">
-          Summarize your tender documents quickly and easily in one place.
-        </p>
+    <div className="container">
+      {/* Upload and Preview Section */}
+      <div className="upload-preview-section">
+        <div className="upload-section">
+          <h1 className="main-heading">Tender Summarizer</h1>
+          <p className="subheading">
+            Summarize your tender documents quickly and easily in one place.
+          </p>
 
-        <button className="primary-button" onClick={handleSelectFile}>
-          <i className="fas fa-file-upload"></i> Select PDF files
-        </button>
+          <button className="primary-button" onClick={handleSelectFile}>
+            <i className="fas fa-file-upload"></i> Select PDF files
+          </button>
 
-        <input
-          type="file"
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-          onChange={onFileChange}
-          accept="application/pdf"
-        />
+          <input
+            type="file"
+            ref={fileInputRef}
+            style={{ display: 'none' }}
+            onChange={onFileChange}
+            accept="application/pdf"
+          />
 
-        {file && <p className="selected-file">Selected file: {file.name}</p>}
+          {file && <p className="selected-file">Selected file: {file.name}</p>}
 
-        <button className="upload-button" onClick={onFileUpload} disabled={loading}>
-          {loading ? 'Uploading...' : 'Upload'}
-        </button>
+          <button className="upload-button" onClick={onFileUpload} disabled={loading}>
+            {loading ? 'Uploading...' : 'Upload'}
+          </button>
+        </div>
       </div>
 
-      {response && (
-        <div className="response-section">
-          <h2>Summary Response</h2>
-          <div className="response-card">
-            {loading ? <div className="loader"></div> : <p>{response}</p>}
-          </div>
+      {/* Summarized Text Section */}
+      <div className="summarized-text-section">
+        <h2>Summary Response</h2>
+        <div className="response-card">
+          {loading ? (
+            <div className="loader"></div>
+          ) : response ? (
+            <pre style={{ whiteSpace: 'pre-wrap' }}>{response}</pre>
+          ) : (
+            <p className="placeholder-text">Summrized text will displayed hear .</p>
+          )}
         </div>
-      )}
-
-      
-      
+      </div>
     </div>
   );
 }
+
 export default App;
