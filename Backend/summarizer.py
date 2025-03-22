@@ -1,214 +1,158 @@
+import sys
 import os
 import re
 import json
-import nltk
+import logging
+import argparse
+import io
+from fuzzywuzzy import fuzz
+import pdfplumber
+import PyPDF2
 import spacy
-import sys
-from PyPDF2 import PdfReader
-from io import BytesIO
-import codecs  # Import codecs for encoding fixes
 
-# Set UTF-8 encoding for standard output and error
-sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
-sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
+# Set stdout and stderr encoding to UTF-8 (with replacement for unencodable characters)
+sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+sys.stderr.reconfigure(encoding='utf-8', errors='replace')
 
-# # Download required NLTK resources if needed.
-# nltk.download("punkt")
-# nltk.download("stopwords")
-# nltk.download("wordnet")
+# Initialize logging
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-# Load spaCy English model for robust sentence segmentation.
+# Initialize spaCy model
 nlp = spacy.load("en_core_web_sm")
 
-# -------------------------------
-# Helper: Guess file extension if missing
-# -------------------------------
-def guess_file_extension(file_path):
-    """Read first few bytes and guess if PDF or TXT."""
-    with open(file_path, "rb") as f:
-        header = f.read(5)
-    if header.startswith(b"%PDF"):
-        return ".pdf"
-    else:
-        return ".txt"
+def load_section_keywords(config_file="tender_config.json"):
+    try:
+        with open(config_file, "r", encoding="utf-8") as file:
+            config = json.load(file)
+        logging.info("Loaded section keywords successfully.")
+        return config.get("section_keywords", {})
+    except Exception as e:
+        logging.error(f"Failed to load config file: {e}")
+        return {}
 
-# -------------------------------
-# 1. Text Extraction
-# -------------------------------
-def extract_text(file_path):
-    ext = os.path.splitext(file_path)[1].lower()
-    if not ext:
-        ext = guess_file_extension(file_path)
-        print(f"Guessed file extension: {ext}", file=sys.stderr)
-    if ext == ".pdf":
-        reader = PdfReader(file_path)
-        text = ""
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text + " "
-        return text
-    elif ext in [".txt", ".text"]:
-        with open(file_path, "r", encoding="utf-8") as f:
-            return f.read()
-    else:
-        raise ValueError(f"Unsupported file type: {ext}. Please use a .pdf or .txt file.")
-
-def extract_text_from_stream(file_stream, file_extension):
-    if file_extension == ".pdf":
-        reader = PdfReader(file_stream)
-        text = ""
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text + " "
-        return text
-    elif file_extension == ".txt":
-        return file_stream.read().decode("utf-8")
-    else:
-        raise ValueError("Unsupported file type. Please use a .pdf or .txt file.")
-
-# -------------------------------
-# 2. Sentence Segmentation
-# -------------------------------
-def get_sentences(text):
-    doc = nlp(text)
-    return [sent.text.strip() for sent in doc.sents if sent.text.strip()]
-
-# -------------------------------
-# 3. Cleaning for Classification
-# -------------------------------
 def clean_sentence(sentence):
-    cleaned = re.sub(r"[^a-zA-Z]", " ", sentence).lower()
-    return cleaned
+    # Remove non-alphanumeric characters and lowercase
+    return re.sub(r'[^a-zA-Z0-9\s]', '', sentence).lower()
 
-# -------------------------------
-# 4. Load Configurable Keywords
-# -------------------------------
-def load_section_keywords():
-    # Use an absolute path for the configuration file
-    config_file = os.path.join(os.path.dirname(__file__), "tender_config.json")
-    if not os.path.exists(config_file):
-        raise FileNotFoundError(f"Configuration file not found at {config_file}")
-    with open(config_file, "r", encoding="utf-8") as f:
-        return json.load(f)
-
-# -------------------------------
-# 5. Classify Sentences into Sections
-# -------------------------------
-def classify_sentence(sentence, section_keywords):
+def classify_sentence(sentence, section_keywords, threshold=80):
     cleaned = clean_sentence(sentence)
     for section, keywords in section_keywords.items():
         for kw in keywords:
-            if kw in cleaned:
+            if fuzz.partial_ratio(kw, cleaned) >= threshold:
                 return section
     return "Additional Information"
 
-def classify_sentences(sentences, section_keywords):
+def extract_pdf_text_plumber(file_stream):
+    text = ""
+    try:
+        with pdfplumber.open(file_stream) as pdf:
+            for page in pdf.pages:
+                page_text = page.extract_text()
+                if page_text:
+                    text += page_text + "\n"
+        logging.info("Extracted text using pdfplumber.")
+        return text
+    except Exception as e:
+        logging.error(f"pdfplumber failed: {e}")
+        return None
+
+def extract_pdf_text_pypdf2(file_stream):
+    text = ""
+    try:
+        reader = PyPDF2.PdfReader(file_stream)
+        for page in reader.pages:
+            page_text = page.extract_text()
+            if page_text:
+                text += page_text + "\n"
+        logging.info("Extracted text using PyPDF2.")
+        return text
+    except Exception as e:
+        logging.error(f"PyPDF2 failed: {e}")
+        return None
+
+def extract_pdf_text(file_stream):
+    text = extract_pdf_text_plumber(file_stream)
+    if text:
+        return text
+    file_stream.seek(0)
+    return extract_pdf_text_pypdf2(file_stream)
+
+def custom_sentence_segmentation(text):
+    sentences = []
+    lines = text.split('\n')
+    for line in lines:
+        stripped = line.strip()
+        if stripped:
+            if not stripped.endswith(('.', ':', ';')):
+                stripped += '.'
+            sentences.append(stripped)
+    logging.info(f"Segmented {len(sentences)} sentences.")
+    return sentences
+
+def assemble_document_json(sections):
+    structured_data = {
+        "Table of Contents": [],
+        "Sections": {}
+    }
+    for section, sentences in sections.items():
+        if sentences:
+            structured_data["Table of Contents"].append(section)
+            structured_data["Sections"][section] = sentences
+    return json.dumps(structured_data, indent=4, ensure_ascii=False)
+
+def process_text(text, section_keywords):
+    sentences = custom_sentence_segmentation(text)
     sections = {section: [] for section in section_keywords.keys()}
     sections["Additional Information"] = []
     for sentence in sentences:
         section = classify_sentence(sentence, section_keywords)
         sections[section].append(sentence)
-    return sections
+    structured_doc_json = assemble_document_json(sections)
+    return structured_doc_json
 
-# -------------------------------
-# 6. Assemble Final Structured Output Dynamically
-# -------------------------------
-def assemble_document(sections):
-    output = []
-    header = " RECONSTRUCTED TENDER DOCUMENT\n"
-    output.append(header)
-    
-    toc = []
-    for section, sentences in sections.items():
-        if sentences:
-            toc.append(section)
-    if toc:
-        output.append("TABLE OF CONTENTS")
-        for idx, section in enumerate(toc, 1):
-            output.append(f"{idx}. {section}")
-        output.append("\n---\n")
-    
-    for section, sentences in sections.items():
-        if sentences:
-            output.append(f" {section.upper()}")
-            for sent in sentences:
-                try:
-                    output.append(f"* {sent}")
-                except UnicodeEncodeError as e:
-                    print(f"Warning: Skipping a sentence due to encoding error: {e}", file=sys.stderr)
-            output.append("")
-    
-    return "\n".join(output)
-
-# -------------------------------
-# 7. Main Processing Pipeline
-# -------------------------------
 def main():
-    # Determine if we're using stdin or file path mode.
-    if len(sys.argv) > 1 and sys.argv[1] == "--stdin":
-        # In this mode, the file content is piped via stdin.
-        print("Reading file content from stdin...", file=sys.stderr)
+    parser = argparse.ArgumentParser(description="Tender Document Summarizer")
+    parser.add_argument("--file", type=str, help="Path to the input file (PDF or TXT)")
+    parser.add_argument("--stdin", action="store_true", help="Read content from stdin")
+    parser.add_argument("--ext", type=str, help="File extension: .pdf or .txt", required=True)
 
-        # Get the file extension from the command-line arguments
-        file_extension = None
-        for arg in sys.argv:
-            if arg.startswith("--ext="):
-                file_extension = arg.split("=")[1].strip().lower()
+    args = parser.parse_args()
 
-        if not file_extension or file_extension not in [".pdf", ".txt"]:
-            print(f"Error: Unsupported or missing file type: {file_extension}. Please use a .pdf or .txt file.", file=sys.stderr)
-            sys.exit(1)
-
-        try:
-            file_stream = BytesIO(sys.stdin.buffer.read())
-            all_text = extract_text_from_stream(file_stream, file_extension)
-        except Exception as e:
-            print(f"Error reading file content: {e}", file=sys.stderr)
-            sys.exit(1)
-    else:
-        # In file path mode, use the provided file path.
-        if len(sys.argv) < 2:
-            print("Usage: python summarizer.py <file_path>", file=sys.stderr)
-            sys.exit(1)
-        file_path = sys.argv[1]
-        print(f"Received file path: {file_path}", file=sys.stderr)
-        file_extension = os.path.splitext(file_path)[1].lower()
-        if not file_extension:
-            file_extension = guess_file_extension(file_path)
-            print(f"Guessed file extension: {file_extension}", file=sys.stderr)
-        else:
-            print(f"File extension: {file_extension}", file=sys.stderr)
-        if not os.path.exists(file_path):
-            print(f"Error: File not found at {file_path}", file=sys.stderr)
-            sys.exit(1)
-        if file_extension not in [".pdf", ".txt"]:
-            print(f"Error: Unsupported file type: {file_extension}. Please use a .pdf or .txt file.", file=sys.stderr)
-            sys.exit(1)
-        try:
-            print("Extracting text...")
-            all_text = extract_text(file_path)
-        except Exception as e:
-            print(f"Error extracting text: {e}", file=sys.stderr)
-            sys.exit(1)
+    section_keywords = load_section_keywords()
 
     try:
-        print("Text extraction complete.", file=sys.stderr)
-        print("Segmenting into sentences...", file=sys.stderr)
-        sentences = get_sentences(all_text)
-        print(f"Total sentences extracted: {len(sentences)}", file=sys.stderr)
-        print("Loading section keywords...", file=sys.stderr)
-        section_keywords = load_section_keywords()
-        print("Classifying sentences into sections...", file=sys.stderr)
-        sections = classify_sentences(sentences, section_keywords)
-        print("Assembling final structured document dynamically...", file=sys.stderr)
-        structured_doc = assemble_document(sections)
-        print("\n=== Final Reconstructed Tender Document ===\n")
-        print(structured_doc)
+        if args.stdin:
+            logging.info("Reading input from stdin...")
+            stdin_input = sys.stdin.buffer.read()
+            if args.ext.lower() == ".pdf":
+                file_stream = io.BytesIO(stdin_input)
+                text = extract_pdf_text(file_stream)
+            elif args.ext.lower() == ".txt":
+                text = stdin_input.decode('utf-8')
+            else:
+                raise ValueError("Unsupported file extension from stdin. Use .pdf or .txt")
+        elif args.file:
+            logging.info(f"Reading file: {args.file}")
+            ext = args.ext.lower()
+            if ext == ".pdf":
+                with open(args.file, 'rb') as f:
+                    text = extract_pdf_text(f)
+            elif ext == ".txt":
+                with open(args.file, 'r', encoding='utf-8') as f:
+                    text = f.read()
+            else:
+                raise ValueError("Unsupported file extension. Use .pdf or .txt")
+        else:
+            raise ValueError("No input provided. Use --file or --stdin")
+
+        if not text:
+            raise ValueError("No text extracted from the document.")
+
+        structured_doc_json = process_text(text, section_keywords)
+        print(structured_doc_json)
     except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+        logging.error(f"Error in processing: {e}")
+        print(json.dumps({"error": str(e)}))
 
 if __name__ == "__main__":
     main()
