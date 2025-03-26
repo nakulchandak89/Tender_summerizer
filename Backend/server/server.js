@@ -64,6 +64,16 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
+app.get('/download', (req, res) => {
+  const filePath = 'summary.pdf'; // Path to the generated PDF file
+  res.download(filePath, (err) => {
+    if (err) {
+      console.error('Error sending the PDF file:', err);
+      res.status(404).json({ error: 'Failed to download the PDF file.' });
+    }
+  });
+});
+
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
 });

@@ -9,6 +9,8 @@ from fuzzywuzzy import fuzz
 import pdfplumber
 import PyPDF2
 import spacy
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 # Set stdout and stderr encoding to UTF-8 (with replacement for unencodable characters)
 sys.stdout.reconfigure(encoding='utf-8', errors='replace')
@@ -83,7 +85,7 @@ def custom_sentence_segmentation(text):
     for line in lines:
         stripped = line.strip()
         if stripped:
-            if not stripped.endswith(('.', ':', ';')):
+            if not stripped.endswith(('.', ':')):
                 stripped += '.'
             sentences.append(stripped)
     logging.info(f"Segmented {len(sentences)} sentences.")
@@ -100,14 +102,47 @@ def assemble_document_json(sections):
             structured_data["Sections"][section] = sentences
     return json.dumps(structured_data, indent=4, ensure_ascii=False)
 
+def format_text_for_output(text):
+    # Remove unwanted special characters, parentheses, and extra spaces
+    formatted_text = re.sub(r'[^\w\s.]', '', text)  # Keep only alphanumeric, spaces, and dots
+    formatted_text = re.sub(r'\s+', ' ', formatted_text).strip()  # Remove extra spaces
+    return formatted_text
+
+def generate_pdf(summary_text, output_file="summary.pdf"):
+    try:
+        c = canvas.Canvas(output_file, pagesize=letter)
+        width, height = letter
+        c.setFont("Helvetica", 12)
+        y_position = height - 50  # Start from the top of the page
+
+        for line in summary_text.split('\n'):
+            if y_position < 50:  # If the text reaches the bottom, create a new page
+                c.showPage()
+                c.setFont("Helvetica", 12)
+                y_position = height - 50
+            c.drawString(50, y_position, line)
+            y_position -= 15  # Move to the next line
+
+        c.save()
+        logging.info(f"PDF generated successfully: {output_file}")
+        return output_file
+    except Exception as e:
+        logging.error(f"Failed to generate PDF: {e}")
+        return None
+
 def process_text(text, section_keywords):
     sentences = custom_sentence_segmentation(text)
     sections = {section: [] for section in section_keywords.keys()}
     sections["Additional Information"] = []
     for sentence in sentences:
         section = classify_sentence(sentence, section_keywords)
-        sections[section].append(sentence)
+        sections[section].append(format_text_for_output(sentence))  # Format each sentence
     structured_doc_json = assemble_document_json(sections)
+
+    # Generate PDF of the summarized text
+    summary_text = "\n".join([f"{section}:\n" + "\n".join(sentences) for section, sentences in sections.items()])
+    generate_pdf(summary_text)
+
     return structured_doc_json
 
 def main():
